@@ -23,8 +23,10 @@
 // #include <time.h>
 
 // wxWidgets 2.6 backward compatibility
+#if wxMAJOR_VERSION == 2
 #if wxMINOR_VERSION < 7
 #define wxFD_SAVE wxSAVE
+#endif
 #endif
 
 // Memory leak debugging

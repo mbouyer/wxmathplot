@@ -88,12 +88,12 @@ if(wxWidgets_FOUND)
     ENDIF(WXMATHPLOT_BUILD_EXAMPLES)
 	
 	# library installation
-    if(UNIX)
-        if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-            set(LIBRARY_APPEND_PATH lib64)
-        else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+#     if(UNIX)
+#         if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+#             set(LIBRARY_APPEND_PATH lib64)
+#         else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
             set(LIBRARY_APPEND_PATH lib)
-        endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+#         endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		install(TARGETS mathplot
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
@@ -105,8 +105,8 @@ if(wxWidgets_FOUND)
 		install(FILES samples/sample1/mp1.cpp samples/sample1/CMakeLists.txt DESTINATION ${WXMATHPLOT_INSTALL_DIR}/samples/sample1)
 		install(FILES samples/sample2/mp2.cpp samples/sample2/CMakeLists.txt DESTINATION ${WXMATHPLOT_INSTALL_DIR}/samples/sample2)
 		install(FILES samples/sample3/sample3.cpp samples/sample3/CMakeLists.txt samples/sample3/gridmap.png DESTINATION ${WXMATHPLOT_INSTALL_DIR}/samples/sample3)
-    else(UNIX)
-    endif(UNIX)
+#     else(UNIX)
+#     endif(UNIX)
 
 else(wxWidgets_FOUND)
     MESSAGE("wxWidgets not found!")
