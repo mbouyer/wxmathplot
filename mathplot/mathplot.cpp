@@ -844,13 +844,17 @@ void mpScaleX::Plot(wxDC & dc, mpWindow & w)
 				if (m_labelType == mpX_NORMAL)
 					s.Printf(fmt, n);
 				else if (m_labelType == mpX_DATETIME) {
-					time_t when = (time_t)n;
-					struct tm tm = *localtime(&when);
-					s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+					if (n > 0) {
+						time_t when = (time_t)n;
+						struct tm tm = *localtime(&when);
+						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+					}
 				} else if (m_labelType == mpX_DATE) {
-					time_t when = (time_t)n;
-					struct tm tm = *localtime(&when);
-					s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+					if (n > 0) {
+						time_t when = (time_t)n;
+						struct tm tm = *localtime(&when);
+						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+					}
 				} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
 					double modulus = fabs(n);
 					double sign = n/modulus;
@@ -891,13 +895,17 @@ void mpScaleX::Plot(wxDC & dc, mpWindow & w)
 				if (m_labelType == mpX_NORMAL)
 					s.Printf(fmt, n);
 				else if (m_labelType == mpX_DATETIME) {
-					time_t when = (time_t)n;
-					struct tm tm = *localtime(&when);
-					s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+					if (n > 0) {
+						time_t when = (time_t)n;
+						struct tm tm = *localtime(&when);
+						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+					}
 				} else if (m_labelType == mpX_DATE) {
-					time_t when = (time_t)n;
-					struct tm tm = *localtime(&when);
-					s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+					if (n > 0) {
+						time_t when = (time_t)n;
+						struct tm tm = *localtime(&when);
+						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+					}
 				} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
 					double modulus = fabs(n);
 					double sign = n/modulus;
@@ -1015,7 +1023,7 @@ void mpScaleY::Plot(wxDC & dc, mpWindow & w)
 		const double step = exp( mpLN10 * dig);
 		const double end  = w.GetPosY() + (double)extend / w.GetScaleY();
 
-		wxCoord tx, ty;
+		wxCoord tx = 0, ty = 0;
 		wxString s;
 		wxString fmt;
 		int tmp = (int)dig;
