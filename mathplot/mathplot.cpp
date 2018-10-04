@@ -260,6 +260,11 @@ void mpInfoCoords::Plot(wxDC & dc, mpWindow & w)
         dc.GetTextExtent(m_content, &textX, &textY);
         if (m_dim.width < textX + 10) m_dim.width = textX + 10;
         if (m_dim.height < textY + 10) m_dim.height = textY + 10;
+				// It looks like that on Windows, GetTetxExtent function
+				// ignores the newline in the calculus of size
+#ifdef _WINDOWS
+				m_dim.height += textY;
+#endif
         dc.DrawRectangle(m_dim.x, m_dim.y, m_dim.width, m_dim.height);
         dc.DrawText(m_content, m_dim.x + 5, m_dim.y + 5);
     }
