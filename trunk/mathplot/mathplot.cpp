@@ -223,6 +223,7 @@ void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
 /* It seems that Windows port of wxWidgets don't support multi-line text to be drawn in a wxDC.
    wxGTK instead works perfectly with it.
    Info on wxForum: http://wxforum.shadonet.com/viewtopic.php?t=3451&highlight=drawtext+eol */
+	// UPDATE 2018-10-04: this seems not to be still valid on latest wxWidgets.
 // #ifdef _WINDOWS
 //     m_content.Printf(wxT("x = %f y = %f"), w.p2x(mouseX), w.p2y(mouseY));
 // #else
@@ -234,6 +235,7 @@ void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
 void mpInfoCoords::Plot(wxDC & dc, mpWindow & w)
 {
     if (m_visible) {
+			int textX = 0, textY = 0;
         // Adjust relative position inside the window
         int scrx = w.GetScrX();
         int scry = w.GetScrY();
@@ -256,16 +258,28 @@ void mpInfoCoords::Plot(wxDC & dc, mpWindow & w)
 //     wxBrush semiWhite(image1);
         dc.SetBrush(m_brush);
         dc.SetFont(m_font);
-        int textX, textY;
-        dc.GetTextExtent(m_content, &textX, &textY);
-        if (m_dim.width < textX + 10) m_dim.width = textX + 10;
-        if (m_dim.height < textY + 10) m_dim.height = textY + 10;
+        
 				// It looks like that on Windows, GetTetxExtent function
 				// ignores the newline in the calculus of size
-#ifdef _WINDOWS
-				m_dim.height += textY;
+#ifdef _WIN32
+				// Windows code
+				wxString m_contentX, m_contentY;
+				int textY_H = 0;
+				m_contentX = m_content.BeforeFirst(wxT('\n'));
+				m_contentY = m_content.AfterFirst(wxT('\n'));
+				dc.GetTextExtent(m_contentX, &textX, &textY);
+				dc.GetTextExtent(m_contentY, &textY_H, &textY);
+				textX = (textX > textY_H) ? textX : textY_H;
+				if (m_dim.width < textX + 10) m_dim.width = textX + 10;
+				if (m_dim.height < 2*textY + 10) m_dim.height = 2*textY + 10;
+#else
+				// *NIX code
+        // dc.GetTextExtent(m_content, &textX, &textY);
+        // if (m_dim.width < textX + 10) m_dim.width = textX + 10;
+				// if (m_dim.height < textY + 10) m_dim.height = textY + 10;
 #endif
-        dc.DrawRectangle(m_dim.x, m_dim.y, m_dim.width, m_dim.height);
+
+				dc.DrawRectangle(m_dim.x, m_dim.y, m_dim.width, m_dim.height);
         dc.DrawText(m_content, m_dim.x + 5, m_dim.y + 5);
     }
 }
