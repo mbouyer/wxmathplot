@@ -220,14 +220,14 @@ void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
     if (event.GetEventType() == wxEVT_MOTION) {
         int mouseX = ((wxMouseEvent&)event).GetX();
         int mouseY = ((wxMouseEvent&)event).GetY();
-/* It seems that Windows port of wxWidgets don't support multi-line test to be drawn in a wxDC.
+/* It seems that Windows port of wxWidgets don't support multi-line text to be drawn in a wxDC.
    wxGTK instead works perfectly with it.
    Info on wxForum: http://wxforum.shadonet.com/viewtopic.php?t=3451&highlight=drawtext+eol */
-#ifdef _WINDOWS
-        m_content.Printf(wxT("x = %f y = %f"), w.p2x(mouseX), w.p2y(mouseY));
-#else
+// #ifdef _WINDOWS
+//     m_content.Printf(wxT("x = %f y = %f"), w.p2x(mouseX), w.p2y(mouseY));
+// #else
 		m_content.Printf(wxT("x = %f\ny = %f"), w.p2x(mouseX), w.p2y(mouseY));
-#endif
+// #endif
     }
 }
 
