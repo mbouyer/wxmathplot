@@ -454,9 +454,13 @@ public:
         @param w the window to plot
         @sa mpLayer::Plot */
     virtual void   Plot(wxDC & dc, mpWindow & w);
+		
+		/** Swith item mode, which is the element on the left of text representing the plot line.
+		 * @param mode The item draw mode: mpLEGEND_LINE or mpLEGEND_SQUARE. */
+		void SetItemMode(int mode);
 
 protected:
-    
+    int m_item_mode;
 };
 
 
@@ -505,6 +509,10 @@ protected:
 #define mpALIGN_SW     0x02
 /** Aligns label to south-east. For use with mpFXY. */
 #define mpALIGN_SE     0x03
+/** Show legend items with line with the same pen of referred mpLayer  */
+#define mpLEGEND_LINE		0x00
+/** Show legend items with small square with the same color of referred mpLayer  */
+#define mpLEGEND_SQUARE	0x01
 
 /*@}*/
 
