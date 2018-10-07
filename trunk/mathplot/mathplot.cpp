@@ -202,12 +202,12 @@ wxSize mpInfoLayer::GetSize()
 
 mpInfoCoords::mpInfoCoords() : mpInfoLayer()
 {
-    
+    m_labelType = mpX_NORMAL;
 }
 
 mpInfoCoords::mpInfoCoords(wxRect rect, const wxBrush* brush) : mpInfoLayer(rect, brush)
 {
-    
+    m_labelType = mpX_NORMAL;
 }
     
 mpInfoCoords::~mpInfoCoords()
@@ -217,19 +217,47 @@ mpInfoCoords::~mpInfoCoords()
 
 void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
 {
-    if (event.GetEventType() == wxEVT_MOTION) {
-        int mouseX = ((wxMouseEvent&)event).GetX();
-        int mouseY = ((wxMouseEvent&)event).GetY();
-/* It seems that Windows port of wxWidgets don't support multi-line text to be drawn in a wxDC.
-   wxGTK instead works perfectly with it.
-   Info on wxForum: http://wxforum.shadonet.com/viewtopic.php?t=3451&highlight=drawtext+eol */
-	// UPDATE 2018-10-04: this seems not to be still valid on latest wxWidgets.
-// #ifdef _WINDOWS
-//     m_content.Printf(wxT("x = %f y = %f"), w.p2x(mouseX), w.p2y(mouseY));
-// #else
-		m_content.Printf(wxT("x = %f\ny = %f"), w.p2x(mouseX), w.p2y(mouseY));
-// #endif
-    }
+	time_t when = 0;
+	double xVal = 0.0, yVal = 0.0;
+	if (event.GetEventType() == wxEVT_MOTION) {
+		int mouseX = ((wxMouseEvent&)event).GetX();
+		int mouseY = ((wxMouseEvent&)event).GetY();
+		xVal = w.p2x(mouseX);
+		yVal = w.p2y(mouseY);
+		/* It seems that Windows port of wxWidgets don't support multi-line text to be drawn in a wxDC.
+		 *   wxGTK instead works perfectly with it.
+		 *   Info on wxForum: http://wxforum.shadonet.com/viewtopic.php?t=3451&highlight=drawtext+eol */
+		// UPDATE 2018-10-04: this seems not to be still valid on latest wxWidgets.
+		// #ifdef _WINDOWS
+		//     m_content.Printf(wxT("x = %f y = %f"), w.p2x(mouseX), w.p2y(mouseY));
+		// #else
+		
+		m_content.Clear();
+		
+		if (m_labelType == mpX_NORMAL)
+			m_content.Printf(wxT("x = %f\ny = %f"), xVal, yVal);
+		else if (m_labelType == mpX_DATETIME) {
+			when = (time_t) xVal;
+			if (when > 0) {
+				struct tm tm = *localtime(&when);
+				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0fT%02.0f:%02.0f:%02.0f\ny = %f"), (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec, yVal);
+			}
+		} else if (m_labelType == mpX_DATE) {
+			when = (time_t) xVal;
+			if (when > 0) {
+				struct tm tm = *localtime(&when);
+				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0f\ny = %f"), (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, yVal);
+			}
+		} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
+			double modulus = fabs(xVal);
+			double sign = xVal/modulus;
+			double hh = floor(modulus/3600);
+			double mm = floor((modulus - hh*3600)/60);
+			double ss = modulus - hh*3600 - mm*60;
+			m_content.Printf(wxT("x = %02.0f:%02.0f:%02.0f\ny = %f"), sign*hh, mm, floor(ss), yVal);
+		}
+
+	}
 }
 
 void mpInfoCoords::Plot(wxDC & dc, mpWindow & w)
@@ -274,9 +302,9 @@ void mpInfoCoords::Plot(wxDC & dc, mpWindow & w)
 				if (m_dim.height < 2*textY + 10) m_dim.height = 2*textY + 10;
 #else
 				// *NIX code
-        // dc.GetTextExtent(m_content, &textX, &textY);
-        // if (m_dim.width < textX + 10) m_dim.width = textX + 10;
-				// if (m_dim.height < textY + 10) m_dim.height = textY + 10;
+        dc.GetTextExtent(m_content, &textX, &textY);
+        if (m_dim.width < textX + 10) m_dim.width = textX + 10;
+				if (m_dim.height < textY + 10) m_dim.height = textY + 10;
 #endif
 
 				dc.DrawRectangle(m_dim.x, m_dim.y, m_dim.width, m_dim.height);
@@ -1980,13 +2008,25 @@ bool mpWindow::UpdateBBox()
             if (first)
             {
                 first = FALSE;
-                m_minX = f->GetMinX(); m_maxX=f->GetMaxX();
-                m_minY = f->GetMinY(); m_maxY=f->GetMaxY();
+                m_minX = f->GetMinX(); 
+								m_maxX=f->GetMaxX();
+                m_minY = f->GetMinY(); 
+								m_maxY=f->GetMaxY();
             }
             else
             {
-                if (f->GetMinX()<m_minX) m_minX=f->GetMinX(); if (f->GetMaxX()>m_maxX) m_maxX=f->GetMaxX();
-                if (f->GetMinY()<m_minY) m_minY=f->GetMinY(); if (f->GetMaxY()>m_maxY) m_maxY=f->GetMaxY();
+                if (f->GetMinX() < m_minX) {
+									m_minX=f->GetMinX();
+								}
+								if (f->GetMaxX() > m_maxX) {
+									m_maxX=f->GetMaxX();
+								}
+                if (f->GetMinY() < m_minY) {
+									m_minY=f->GetMinY();
+								}
+								if (f->GetMaxY() > m_maxY) {
+									m_maxY=f->GetMaxY();
+								}
             }
         }
         //node = node->GetNext();
@@ -2257,13 +2297,13 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
 		SetScr(sizeX, sizeY);
 	}
 
-    wxBitmap screenBuffer(sizeX,sizeY);
-    wxMemoryDC screenDC;
-    screenDC.SelectObject(screenBuffer);
-    screenDC.SetPen( *wxTRANSPARENT_PEN );
-    wxBrush brush( GetBackgroundColour() );
-    screenDC.SetBrush( brush );
-    screenDC.DrawRectangle(0,0,sizeX,sizeY);
+	wxBitmap screenBuffer(sizeX,sizeY);
+	wxMemoryDC screenDC;
+	screenDC.SelectObject(screenBuffer);
+	screenDC.SetPen( *wxTRANSPARENT_PEN );
+	wxBrush brush( GetBackgroundColour() );
+	screenDC.SetBrush( brush );
+	screenDC.DrawRectangle(0,0,sizeX,sizeY);
 
 	if (fit) {
 		Fit(m_minX, m_maxX, m_minY, m_maxY, &sizeX, &sizeY);
@@ -2272,15 +2312,16 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
 	}
     // Draw all the layers:
     wxLayerList::iterator li;
-    for (li = m_layers.begin(); li != m_layers.end(); li++)
+    for (li = m_layers.begin(); li != m_layers.end(); li++) {
     	(*li)->Plot(screenDC, *this);
+		}
 
-	if (imageSize != wxDefaultSize) {
-		// Restore dimensions
-		SetScr(bk_scrX, bk_scrY);
-                Fit(m_desiredXmin, m_desiredXmax, m_desiredYmin, m_desiredYmax, &bk_scrX, &bk_scrY);
-		UpdateAll();
-	}
+		if (imageSize != wxDefaultSize) {
+			// Restore dimensions
+			SetScr(bk_scrX, bk_scrY);
+									Fit(m_desiredXmin, m_desiredXmax, m_desiredYmin, m_desiredYmax, &bk_scrX, &bk_scrY);
+			UpdateAll();
+		}
     // Once drawing is complete, actually save screen shot
     wxImage screenImage = screenBuffer.ConvertToImage();
     return screenImage.SaveFile(filename, (wxBitmapType) type);

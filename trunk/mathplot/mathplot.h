@@ -421,9 +421,14 @@ public:
         @param w the window to plot
         @sa mpLayer::Plot */
     virtual void   Plot(wxDC & dc, mpWindow & w);
+		
+    /** Set X axis label view mode.
+        @param mode mpX_NORMAL for normal labels, mpX_TIME for time axis in hours, minutes, seconds. */
+    void SetLabelMode(unsigned int mode) { m_labelType = mode; };
 
 protected:
     wxString m_content; //!< string holding the coordinates to be drawn.
+    unsigned int m_labelType;
 };
 
 /** @class mpInfoLegend
