@@ -219,6 +219,7 @@ void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
 {
 	time_t when = 0;
 	double xVal = 0.0, yVal = 0.0;
+	struct tm timestruct;
 	if (event.GetEventType() == wxEVT_MOTION) {
 		int mouseX = ((wxMouseEvent&)event).GetX();
 		int mouseY = ((wxMouseEvent&)event).GetY();
@@ -239,14 +240,22 @@ void mpInfoCoords::UpdateInfo(mpWindow& w, wxEvent& event)
 		else if (m_labelType == mpX_DATETIME) {
 			when = (time_t) xVal;
 			if (when > 0) {
-				struct tm tm = *localtime(&when);
-				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0fT%02.0f:%02.0f:%02.0f\ny = %f"), (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec, yVal);
+				if (m_timeConv == mpX_LOCALTIME) {
+					timestruct = *localtime(&when);
+				} else {
+					timestruct = *gmtime(&when);
+				}
+				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0fT%02.0f:%02.0f:%02.0f\ny = %f"), (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday, (double)timestruct.tm_hour, (double)timestruct.tm_min, (double)timestruct.tm_sec, yVal);
 			}
 		} else if (m_labelType == mpX_DATE) {
 			when = (time_t) xVal;
 			if (when > 0) {
-				struct tm tm = *localtime(&when);
-				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0f\ny = %f"), (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, yVal);
+				if (m_timeConv == mpX_LOCALTIME) {
+					timestruct = *localtime(&when);
+				} else {
+					timestruct = *gmtime(&when);
+				}
+				m_content.Printf(wxT("x = %04.0f-%02.0f-%02.0f\ny = %f"), (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday, yVal);
 			}
 		} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
 			double modulus = fabs(xVal);
@@ -790,6 +799,7 @@ mpScaleX::mpScaleX(wxString name, int flags, bool ticks, unsigned int type)
     m_flags = flags;
     m_ticks = ticks;
     m_labelType = type;
+		m_timeConv = mpX_RAWTIME;
     m_type = mpLAYER_AXIS;
 	m_labelFormat = wxT("");
 }
@@ -876,6 +886,7 @@ void mpScaleX::Plot(wxDC & dc, mpWindow & w)
 		int labelH = 0; // Control labels heigth to decide where to put axis name (below labels or on top of axis)
 		int maxExtent = 0;
 		time_t when = 0;
+		struct tm timestruct;
 		for (n = n0; n < end; n += step) {
 			const int p = (int)((n - w.GetPosX()) * w.GetScaleX());
 #ifdef MATHPLOT_DO_LOGGING
@@ -908,14 +919,22 @@ void mpScaleX::Plot(wxDC & dc, mpWindow & w)
 				else if (m_labelType == mpX_DATETIME) {
 					when = (time_t)n;
 					if (when > 0) {
-						struct tm tm = *localtime(&when);
-						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+						if (m_timeConv == mpX_LOCALTIME) {
+							timestruct = *localtime(&when);
+						} else {
+							timestruct = *gmtime(&when);
+						}
+						s.Printf(fmt, (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday, (double)timestruct.tm_hour, (double)timestruct.tm_min, (double)timestruct.tm_sec);
 					}
 				} else if (m_labelType == mpX_DATE) {
 					when = (time_t)n;
 					if (when > 0) {
-						struct tm tm = *localtime(&when);
-						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+						if (m_timeConv == mpX_LOCALTIME) {
+							timestruct = *localtime(&when);
+						} else {
+							timestruct = *gmtime(&when);
+						}
+						s.Printf(fmt, (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday);
 					}
 				} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
 					double modulus = fabs(n);
@@ -959,14 +978,22 @@ void mpScaleX::Plot(wxDC & dc, mpWindow & w)
 				else if (m_labelType == mpX_DATETIME) {
 					when = (time_t)n;
 					if (when > 0) {
-						struct tm tm = *localtime(&when);
-						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday, (double)tm.tm_hour, (double)tm.tm_min, (double)tm.tm_sec);
+						if (m_timeConv == mpX_LOCALTIME) {
+							timestruct = *localtime(&when);
+						} else {
+							timestruct = *gmtime(&when);
+						}
+						s.Printf(fmt, (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday, (double)timestruct.tm_hour, (double)timestruct.tm_min, (double)timestruct.tm_sec);
 					}
 				} else if (m_labelType == mpX_DATE) {
 					when = (time_t)n;
 					if (when > 0) {
-						struct tm tm = *localtime(&when);
-						s.Printf(fmt, (double)tm.tm_year+1900, (double)tm.tm_mon+1, (double)tm.tm_mday);
+						if (m_timeConv == mpX_LOCALTIME) {
+							timestruct = *localtime(&when);
+						} else {
+							timestruct = *gmtime(&when);
+						}
+						s.Printf(fmt, (double)timestruct.tm_year+1900, (double)timestruct.tm_mon+1, (double)timestruct.tm_mday);
 					}
 				} else if ((m_labelType == mpX_TIME) || (m_labelType == mpX_HOURS)) {
 					double modulus = fabs(n);
