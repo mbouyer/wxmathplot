@@ -1099,7 +1099,7 @@ void mpScaleY::Plot(wxDC & dc, mpWindow & w)
 			orgx = 1; //-dc.LogicalToDeviceX(0);
 
 
-        // Draw line
+		// Draw line
 		dc.DrawLine( orgx, 0, orgx, extend);
 		
 		// To cut the axis line when draw outside margin is false, use this code
@@ -1190,8 +1190,8 @@ void mpScaleY::Plot(wxDC & dc, mpWindow & w)
 			}
 		}
 		}
+		
 		// Draw axis name
-
 		dc.GetTextExtent(m_name, &tx, &ty);
 		switch (m_flags) {
 			case mpALIGN_BORDER_LEFT:
@@ -1895,7 +1895,7 @@ void mpWindow::OnPaint( wxPaintEvent& WXUNUSED(event) )
     trgDc->SetPen( *wxTRANSPARENT_PEN );
     wxBrush brush( GetBackgroundColour() );
     trgDc->SetBrush( brush );
-	trgDc->SetTextForeground(m_fgColour);
+		trgDc->SetTextForeground(m_fgColour);
     trgDc->DrawRectangle(0,0,m_scrX,m_scrY);
 
     // Draw all the layers:
@@ -2327,7 +2327,9 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
 	wxBitmap screenBuffer(sizeX,sizeY);
 	wxMemoryDC screenDC;
 	screenDC.SelectObject(screenBuffer);
-	screenDC.SetPen( *wxTRANSPARENT_PEN );
+	// screenDC.SetPen( *wxTRANSPARENT_PEN );
+	screenDC.SetPen( *wxWHITE_PEN );
+	screenDC.SetTextForeground(m_fgColour);
 	wxBrush brush( GetBackgroundColour() );
 	screenDC.SetBrush( brush );
 	screenDC.DrawRectangle(0,0,sizeX,sizeY);
@@ -2341,12 +2343,24 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
     wxLayerList::iterator li;
     for (li = m_layers.begin(); li != m_layers.end(); li++) {
     	(*li)->Plot(screenDC, *this);
+			// DEBUG
+// 			wxString layerTypeName;
+// 			if ((*li)->GetLayerType() == mpLAYER_PLOT) {
+// 				layerTypeName = wxT("Plot");
+// 			} else if ((*li)->GetLayerType() == mpLAYER_AXIS) {
+// 				layerTypeName = wxT("Axis");
+// 			} else if ((*li)->GetLayerType() == mpLAYER_INFO) {
+// 				layerTypeName = wxT("Info");
+// 			}	else {
+// 				layerTypeName = wxT("Undefined");
+// 			}
+// 			wxLogMessage(_("Layer %s (%s): color %s"), (*li)->GetName(), layerTypeName.c_str(), (*li)->GetPen().GetColour().GetAsString().c_str());
 		}
 
 		if (imageSize != wxDefaultSize) {
 			// Restore dimensions
 			SetScr(bk_scrX, bk_scrY);
-									Fit(m_desiredXmin, m_desiredXmax, m_desiredYmin, m_desiredYmax, &bk_scrX, &bk_scrY);
+			Fit(m_desiredXmin, m_desiredXmax, m_desiredYmin, m_desiredYmax, &bk_scrX, &bk_scrY);
 			UpdateAll();
 		}
     // Once drawing is complete, actually save screen shot
