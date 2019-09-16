@@ -89,14 +89,14 @@ if(wxWidgets_FOUND)
 	
 	# library installation
 #     if(UNIX)
-#         if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-#             set(LIBRARY_APPEND_PATH lib64)
-#         else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-#            set(LIBRARY_APPEND_PATH lib)
-#         endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+        if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+            set(LIBRARY_APPEND_PATH lib64)
+        else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+           set(LIBRARY_APPEND_PATH lib)
+        endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		install(TARGETS mathplot
 #            RUNTIME DESTINATION bin
-#            LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
+           LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
 #            ARCHIVE DESTINATION ${LIBRARY_APPEND_PATH}
         )
         set(WXMATHPLOT_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/share/wxMathPlot/)
