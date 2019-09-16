@@ -13,7 +13,6 @@ License: wxWindows
 Summary: 2D plot library for wxWidgets
 Group: Applications/Development
 Packager: Davide Rondini
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Source: %{name}-%{version}.tar.gz
 # Managing wxWidgets dependecy is quite complicated
 # Both Fedora and SuSE (up to 11.3) use the package wxGTK as main package for wxWidgets, but SuSE includes
@@ -31,6 +30,7 @@ BuildRequires: cmake (wxGTK-devel or wxGTK3-devel)
 %description
 wxMathPlot is a library to add 2D scientific plot functionality to wxWidgets. It allows to embed inside your program a window for plotting scientific, statistical or mathematical data, with additions like legend or coordinate display in overlay.
 
+%global debug_package %{nil}
 %prep
 %setup
 
@@ -43,7 +43,7 @@ wxMathPlot is a library to add 2D scientific plot functionality to wxWidgets. It
 # if 0{fedora}
 # cmake -D CMAKE_INSTALL_PREFIX:STRING={buildroot}/usr -D GDB_DEBUG:BOOL=FALSE -D BUILD_NATIVE:BOOL=TRUE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
 # else
-cmake -D CMAKE_INSTALL_PREFIX:STRING=/usr -D GDB_DEBUG:BOOL=FALSE -D BUILD_NATIVE:BOOL=TRUE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
+cmake -D CMAKE_INSTALL_PREFIX:STRING=/usr -D GDB_DEBUG:BOOL=FALSE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
 # cmake -D GDB_DEBUG:BOOL=FALSE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
 # endif
 make
