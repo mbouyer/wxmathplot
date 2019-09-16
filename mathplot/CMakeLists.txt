@@ -7,9 +7,9 @@
 
 # Set CMake flags to enable compatibility both with 2.4 and 2.6
 cmake_minimum_required(VERSION 2.4)
-if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 OLD)
-endif(COMMAND cmake_policy)
+# if(COMMAND cmake_policy)
+#       cmake_policy(SET CMP0003 OLD)
+# endif(COMMAND cmake_policy)
 
 project(wxMathPlot)
 
@@ -95,7 +95,7 @@ if(wxWidgets_FOUND)
 #            set(LIBRARY_APPEND_PATH lib)
 #         endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		install(TARGETS mathplot
-            RUNTIME DESTINATION bin
+#            RUNTIME DESTINATION bin
 #            LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
 #            ARCHIVE DESTINATION ${LIBRARY_APPEND_PATH}
         )
