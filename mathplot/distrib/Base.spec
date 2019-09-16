@@ -22,10 +22,10 @@ Source: %{name}-%{version}.tar.gz
 # Finally, starting from 11.4, OpenSuSE changed the package name, calling it wxWidgets, forcing to put an if statement
 %if 0%{?suse_version} >= 1140
 Requires: wxWidgets
-BuildPrereq: cmake wxWidgets-devel
+BuildRequires: cmake wxWidgets-devel
 %else
-Requires: wxGTK wxGTK-gl
-BuildPrereq: cmake wxGTK-devel
+Requires: (wxGTK or wxGTK3) (wxGTK-gl or wxGTK3-gl)
+BuildRequires: cmake (wxGTK-devel or wxGTK3-devel)
 %endif
 
 %description
@@ -37,19 +37,19 @@ wxMathPlot is a library to add 2D scientific plot functionality to wxWidgets. It
 %build
 
 # Another difference between Fedora and other distributions:
-# if using %{buildroot}/usr as target path the OpenSuSE (and also CentOS?)
+# if using {buildroot}/usr as target path the OpenSuSE (and also CentOS?)
 # copies the full path inside BUILDROOT, replicating it twice, and generating
 # an error. Fedora instead works fine
-%if 0%{fedora}
-cmake -D CMAKE_INSTALL_PREFIX:STRING=%{buildroot}/usr -D GDB_DEBUG:BOOL=FALSE -D BUILD_NATIVE:BOOL=TRUE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
-%else
+# if 0{fedora}
+# cmake -D CMAKE_INSTALL_PREFIX:STRING={buildroot}/usr -D GDB_DEBUG:BOOL=FALSE -D BUILD_NATIVE:BOOL=TRUE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
+# else
 cmake -D CMAKE_INSTALL_PREFIX:STRING=/usr -D GDB_DEBUG:BOOL=FALSE -D BUILD_NATIVE:BOOL=TRUE -D MATHPLOT_SHARED:STRING=TRUE -D WXMATHPLOT_BUILD_EXAMPLES:BOOL=FALSE .
-%endif
+# endif
 make
 
 %install
 # rm -rf %{buildroot}
-%makeinstall
+%make_install
 
 %clean
 rm -rf %{buildroot}
