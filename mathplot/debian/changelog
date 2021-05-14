@@ -1,3 +1,19 @@
+wxmathplot (0.2.0) stable; urgency=medium
+
+  * Fix X scale: if X axis is set to date/time format, avoid negative values, which are not recognized by Windows.
+  * Initialized coords in mpScaleY to avoid flooding valgrind outputs of warnings.
+  * mpScaleX labels: under WIN32 platform time_t is 32 bit signed, so dates has to be checked to be valid to avoid crashes.
+    This is subject to 2038 bug, but should be avoided on 64 bit builds.
+  * Fix for mpInfoCoords rectangle size on Windows.
+  * Introduced item mode in mpInfoLegend, to draw a square instead of a line in legend, which is more clear.
+  * Implemented formatting mouse coordinate display in the same way as x axis using time formats.
+  * Removed some gcc build warnings.
+  * Adding the option to printout date and time data using gmtime instead of localtime.
+  * Fixed bug when saving screenshots when not in white background: taxt elements were always printed in black.
+  * Created new release 0.2.0 to distribute new updated version.
+
+ -- Davide Rondini <cdron77@users.sourceforge.net>  Fri, 14 May 2021 12:04:53 +0200
+
 wxmathplot (0.1.3-xenial1) Ubuntu; urgency=medium
 
   * Rebuild for Ubuntu 16.04.
