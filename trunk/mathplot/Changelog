@@ -1,3 +1,14 @@
+Version 0.2.0 - 2021-05-14
+* Fix X scale: if X axis is set to date/time format, avoid negative values, which are not recognized by Windows. Initialized coords in mpScaleY to avoid flooding valgrind outputs of warnings.
+* mpScaleX labels: under WIN32 platform time_t is 32 bit signed, so dates has to be checked to be valid to avoid crashes. This is subject to 2038 bug, but should be avoided on 64 bit builds.
+* Fix for mpInfoCoords rectangle size on Windows.
+* Introduced item mode in mpInfoLegend, to draw a square instead of a line in legend, which is more clear.
+* Implemented formatting mouse coordinate display in the same way as x axis using time formats.
+* Removed some gcc build warnings.
+* Adding the option to printout date and time data using gmtime instead of localtime.
+* Fixed bug when saving screenshots when not in white background: taxt elements were always printed in black.
+* Fix install command for Windows cross-building using MinGW.
+
 Version 0.1.2 - 2009-10-25
 * Added mpX_DATE and mpX_DATETIME formats for X axis.
 * Axes labels' format can now be set using the SetLabelFormat function, so the user can select the appropriate format fitting his needs.
