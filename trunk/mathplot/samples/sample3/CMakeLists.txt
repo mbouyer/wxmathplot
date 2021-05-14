@@ -7,7 +7,7 @@
 # Set CMake flags to enable compatibility both with 2.4 and 2.6
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 OLD)
+      cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
 SET(wxWidgets_USE_LIBS base core)
@@ -30,5 +30,5 @@ if(wxWidgets_FOUND)
 		set_source_files_properties(sample3.cpp PROPERTIES COMPILE_FLAGS "-m32 -DwxSIZE_T_IS_UINT")
 		set_target_properties(mpSample3 PROPERTIES LINK_FLAGS "-m32")
 	endif(LINUX_64_32_CROSSCOMPILE)
-	target_link_libraries(mpSample3 ${wxWidgets_LIBRARIES} mathplot)
+	target_link_libraries(mpSample3 mathplot ${wxWidgets_LIBRARIES})
 endif(wxWidgets_FOUND)
