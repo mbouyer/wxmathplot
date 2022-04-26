@@ -89,11 +89,13 @@ if(wxWidgets_FOUND)
 	
 	# library installation
 #     if(UNIX)
-        if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-            set(LIBRARY_APPEND_PATH lib64)
-        else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
-           set(LIBRARY_APPEND_PATH lib)
-        endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+		# Most Linux distributions nowadays use /usr/lib in 64 bit versions,
+		# so this is obsolete
+        # if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+        #     set(LIBRARY_APPEND_PATH lib64)
+        # else(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+        #    set(LIBRARY_APPEND_PATH lib)
+        # endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		install(TARGETS mathplot
 #            RUNTIME DESTINATION bin
            LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
