@@ -97,7 +97,6 @@ if(wxWidgets_FOUND)
         #    set(LIBRARY_APPEND_PATH lib)
         # endif(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
 		install(TARGETS mathplot
-#            RUNTIME DESTINATION bin
            LIBRARY DESTINATION ${LIBRARY_APPEND_PATH}
            ARCHIVE DESTINATION ${LIBRARY_APPEND_PATH}
         )
